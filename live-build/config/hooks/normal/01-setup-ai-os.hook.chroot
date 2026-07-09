@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 
 set -e
 
@@ -34,10 +34,13 @@ exec python3 /usr/local/share/ai-os/ai-daemon.py "$@"
 EOF
 chmod +x /usr/local/bin/ai-daemon
 
-# 4. Correct permissions for sudoers configuration
-echo "Fixing permissions on /etc/sudoers.d/ai..."
+# 4. Correct permissions for sudoers configuration and setup scripts
+echo "Fixing permissions on /etc/sudoers.d/ai and rootfs scripts..."
 chown root:root /etc/sudoers.d/ai
 chmod 0440 /etc/sudoers.d/ai
+if [ -f /usr/local/sbin/ai-rootfs.sh ]; then
+    chmod +x /usr/local/sbin/ai-rootfs.sh
+fi
 
 # 5. Enable systemd services
 echo "Enabling systemd services..."
