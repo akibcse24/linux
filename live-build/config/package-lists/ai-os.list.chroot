@@ -51,6 +51,7 @@ nano
 vim
 unzip
 zip
+zstd
 rsync
 file
 lsb-release
