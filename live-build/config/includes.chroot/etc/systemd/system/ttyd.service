@@ -1,0 +1,15 @@
+[Unit]
+Description=ttyd Web Terminal
+After=network.target live-config.service
+
+[Service]
+Type=simple
+User=ai
+WorkingDirectory=/home/ai
+Environment=HOME=/home/ai
+ExecStart=/usr/local/bin/ttyd -p 7681 bash
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

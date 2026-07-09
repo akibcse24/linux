@@ -1,0 +1,19 @@
+# nodm configuration
+
+# Controls whether nodm is enabled or not
+NODM_ENABLED=true
+
+# User to autologin
+NODM_USER=ai
+
+# First virtual terminal to use
+NODM_FIRST_VT=7
+
+# X session redirect
+NODM_XSESSION=/etc/X11/Xsession
+
+# Options for the X server
+NODM_X_OPTIONS="-nolisten tcp"
+
+# Min time in seconds to wait before restarting session
+NODM_MIN_SESSION_TIME=60

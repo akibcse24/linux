@@ -1,0 +1,15 @@
+[Unit]
+Description=AI OS Daemon (FastAPI and FastMCP)
+After=network.target live-config.service
+
+[Service]
+Type=simple
+User=ai
+WorkingDirectory=/home/ai
+Environment=HOME=/home/ai
+ExecStart=/usr/local/bin/ai-daemon
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

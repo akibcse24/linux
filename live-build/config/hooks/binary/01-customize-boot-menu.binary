@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -e
+
+echo "=== Running binary hook: 01-customize-boot-menu.binary ==="
+
+# 1. Modify Syslinux/Isolinux config if it exists
+ISOLINUX_CFG="binary/isolinux/live.cfg"
+if [ -f "$ISOLINUX_CFG" ]; then
+    echo "Modifying isolinux config: $ISOLINUX_CFG"
+    # Append the persistence menu entry
+    cat << 'EOF' >> "$ISOLINUX_CFG"
+
+label live-amd64-persistence
+	menu label ^Live System with Persistence (amd64)
+	linux /live/vmlinuz
+	append initrd=/live/initrd.img boot=live components quiet splash persistence
+EOF
+fi
+
+# 2. Modify GRUB config if it exists
+GRUB_CFG="binary/boot/grub/grub.cfg"
+if [ -f "$GRUB_CFG" ]; then
+    echo "Modifying GRUB config: $GRUB_CFG"
+    # Append the persistence menu entry
+    cat << 'EOF' >> "$GRUB_CFG"
+
+menuentry "Live System with Persistence (amd64)" {
+	linux /live/vmlinuz boot=live components quiet splash persistence
+	initrd /live/initrd.img
+}
+EOF
+fi
+
+echo "=== Binary hook completed successfully ==="

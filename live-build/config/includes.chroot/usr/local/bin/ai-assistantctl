@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$#" -eq 0 ]; then
+  printf 'Usage: ai-assistantctl <natural language request>\n' >&2
+  exit 1
+fi
+
+payload=$(printf '%s' "$*" | jq -R -s '{message: .}')
+curl -fsSL -H 'Content-Type: application/json' -d "$payload" http://127.0.0.1:8811/command | jq -r '.stdout // .message // .stderr // .error // empty'

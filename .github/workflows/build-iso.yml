@@ -1,0 +1,40 @@
+name: Build ctx0an ISO
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm
+      options: --privileged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update apt cache and install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y live-build debootstrap squashfs-tools xorriso curl git wget
+
+      - name: Configure and build ISO
+        run: |
+          # Ensure scripts are executable
+          chmod +x live-build/auto/* || true
+          chmod -R +x live-build/config/hooks || true
+          
+          cd live-build
+          lb clean
+          lb config
+          lb build
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-powered-linux-iso
+          path: live-build/*.iso

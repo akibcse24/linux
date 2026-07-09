@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+lb config noauto \
+    --mode debian \
+    --distribution bookworm \
+    --binary-images iso-hybrid \
+    --architectures amd64 \
+    --archive-areas "main contrib non-free non-free-firmware" \
+    --apt-recommends false \
+    --bootappend-live "boot=live components quiet splash" \
+    "${@}"

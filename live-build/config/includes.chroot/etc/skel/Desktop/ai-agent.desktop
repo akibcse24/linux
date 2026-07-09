@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AI Agent Console
+Comment=Launch Local AI Agent Loop
+Exec=lxterminal -e "bash -c 'echo \"=== AI Agent Console ===\"; echo \"Please enter your task: \"; read task; if [ -n \"\$task\" ]; then ai-agent \"\$task\"; else echo \"Empty task. Exiting...\"; fi; echo \"Press Enter to close...\"; read'"
+Icon=/usr/local/share/ai-os/logo.png
+Terminal=false
+Categories=System;Utility;
+StartupNotify=true

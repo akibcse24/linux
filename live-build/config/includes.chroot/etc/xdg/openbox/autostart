@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Start the panel
+tint2 &
+
+# Start pcmanfm in desktop mode and apply custom wallpaper
+pcmanfm --desktop &
+(sleep 1 && pcmanfm --set-wallpaper="/usr/local/share/ai-os/wallpaper.png" --wallpaper-mode=stretch) &
+
+# Start NetworkManager applet (provides system tray icon for Wi-Fi/Ethernet)
+nm-applet &
+
+# Start VMware User Tools for clipboard sharing and auto-resizing
+if [ -f /usr/bin/vmware-user-suid-wrapper ]; then
+    /usr/bin/vmware-user-suid-wrapper &
+fi
+
+# Open a terminal with a welcome message and tips on using the AI tools
+lxterminal -e "bash -c 'echo \"=== Welcome to ctx0an OS ===\"; echo \"\"; echo \"- Local CLI Python Agent: ai-agent\"; echo \"  Usage: ai-agent \\\"explain the directory structure\\\"\"; echo \"\"; echo \"- FastAPI REST & MCP Daemon: Port 8000\"; echo \"- Web-based Terminal (ttyd): Port 7681\"; echo \"\"; echo \"Press Enter to start working in bash...\"; read; exec bash'" &
+
+

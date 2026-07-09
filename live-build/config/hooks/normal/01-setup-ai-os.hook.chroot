@@ -1,0 +1,67 @@
+﻿#!/bin/sh
+
+set -e
+
+echo "=== Running chroot hook: 01-setup-ai-os.hook.chroot ==="
+
+# 1. Download ttyd static binary
+echo "Downloading ttyd..."
+mkdir -p /usr/local/bin
+curl -L -o /usr/local/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64
+chmod +x /usr/local/bin/ttyd
+
+# 2. Setup Python virtual environment
+echo "Setting up Python virtual environment /opt/ai-env..."
+python3 -m venv /opt/ai-env
+/opt/ai-env/bin/pip install --upgrade pip
+/opt/ai-env/bin/pip install fastapi uvicorn psutil mcp fastmcp google-generativeai openai anthropic
+
+# 3. Create wrappers for ai-agent and ai-daemon
+echo "Creating wrappers..."
+mkdir -p /usr/local/share/ai-os
+
+cat << 'EOF' > /usr/local/bin/ai-agent
+#!/bin/sh
+export PATH="/opt/ai-env/bin:$PATH"
+exec python3 /usr/local/share/ai-os/ai-agent.py "$@"
+EOF
+chmod +x /usr/local/bin/ai-agent
+
+cat << 'EOF' > /usr/local/bin/ai-daemon
+#!/bin/sh
+export PATH="/opt/ai-env/bin:$PATH"
+exec python3 /usr/local/share/ai-os/ai-daemon.py "$@"
+EOF
+chmod +x /usr/local/bin/ai-daemon
+
+# 4. Correct permissions for sudoers configuration
+echo "Fixing permissions on /etc/sudoers.d/ai..."
+chown root:root /etc/sudoers.d/ai
+chmod 0440 /etc/sudoers.d/ai
+
+# 5. Enable systemd services
+echo "Enabling systemd services..."
+systemctl --root=/ enable ai-daemon.service || true
+systemctl --root=/ enable ttyd.service || true
+
+# 6. Make desktop launcher executable
+echo "Configuring desktop launcher permissions..."
+if [ -f /etc/skel/Desktop/ai-agent.desktop ]; then
+    chmod +x /etc/skel/Desktop/ai-agent.desktop
+fi
+
+# 7. Configure Plymouth boot splash logo
+echo "Configuring Plymouth boot splash..."
+if [ -d /usr/share/plymouth/themes/spinner ]; then
+    # Overwrite the default theme images with our custom AI logo
+    cp /usr/local/share/ai-os/logo.png /usr/share/plymouth/themes/spinner/watermark.png
+    cp /usr/local/share/ai-os/logo.png /usr/share/plymouth/themes/spinner/logo.png || true
+    
+    # Set spinner as default theme
+    plymouth-set-default-theme spinner
+    
+    # Rebuild the initramfs so it packs the custom splash image
+    update-initramfs -u -k all
+fi
+
+echo "=== Chroot hook completed successfully ==="
