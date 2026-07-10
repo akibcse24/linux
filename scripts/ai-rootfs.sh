@@ -41,6 +41,14 @@ if ! command -v ldconfig >/dev/null 2>&1; then
   apt-get install -y --no-install-recommends libc-bin
 fi
 
+if ! command -v ldconfig >/dev/null 2>&1; then
+  if [ -x /usr/sbin/ldconfig ]; then
+    ln -sf /usr/sbin/ldconfig /usr/bin/ldconfig
+  elif [ -x /sbin/ldconfig ]; then
+    ln -sf /sbin/ldconfig /usr/bin/ldconfig
+  fi
+fi
+
 # Ollama's installer may return non-zero in chroot/CI when systemd is unavailable.
 # Keep the build green if the binary was installed successfully.
 if ! curl -fsSL https://ollama.com/install.sh | sh; then

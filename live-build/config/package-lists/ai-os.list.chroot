@@ -38,6 +38,7 @@ libffi-dev
 
 # Build and runtime utilities
 sudo
+libc-bin
 curl
 wget
 git
