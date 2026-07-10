@@ -26,7 +26,7 @@ install -d -m 0755 "${AI_HOME}/.config/Code/User" "${AI_HOME}/.config/openbox" "
 chown -R "${AI_USER}:${AI_GROUP}" "${AI_HOME}"
 
 apt-get update
-apt-get install -y --no-install-recommends python3-venv python3-pip python3-dev python3-full build-essential curl wget jq gnupg gpg ca-certificates
+apt-get install -y --no-install-recommends python3-venv python3-pip python3-dev python3-full build-essential curl wget jq gnupg gpg ca-certificates libc-bin
 
 if [ ! -d "${PYTHON_VENV}" ]; then
   python3 -m venv "${PYTHON_VENV}"
@@ -37,7 +37,20 @@ fi
 "${PYTHON_VENV}/bin/pip" install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio
 "${PYTHON_VENV}/bin/pip" install --no-cache-dir tensorflow-cpu
 
-curl -fsSL https://ollama.com/install.sh | sh
+if ! command -v ldconfig >/dev/null 2>&1; then
+  apt-get install -y --no-install-recommends libc-bin
+fi
+
+# Ollama's installer may return non-zero in chroot/CI when systemd is unavailable.
+# Keep the build green if the binary was installed successfully.
+if ! curl -fsSL https://ollama.com/install.sh | sh; then
+  if command -v ollama >/dev/null 2>&1; then
+    echo "WARNING: Ollama installer returned non-zero, but ollama is installed. Continuing."
+  else
+    echo "ERROR: Ollama installation failed and binary is missing."
+    exit 1
+  fi
+fi
 
 su - "${AI_USER}" -c 'curl -fsSL https://lmstudio.ai/install.sh | bash'
 
