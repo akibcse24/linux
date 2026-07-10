@@ -38,3 +38,33 @@ jobs:
         with:
           name: ctx0an-iso
           path: live-build/*.iso
+
+      - name: Configure rclone and upload to Cloudflare R2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+        run: |
+          if [ -z "$R2_ACCESS_KEY_ID" ] || [ -z "$R2_SECRET_ACCESS_KEY" ] || [ -z "$R2_ACCOUNT_ID" ]; then
+            echo "WARNING: Cloudflare R2 secrets are not configured in GitHub repository. Skipping upload."
+            exit 0
+          fi
+          
+          # Install rclone
+          apt-get install -y rclone
+          
+          # Write rclone config using secrets
+          mkdir -p ~/.config/rclone
+          cat << EOF > ~/.config/rclone/rclone.conf
+          [r2]
+          type = s3
+          provider = Cloudflare
+          access_key_id = $R2_ACCESS_KEY_ID
+          secret_access_key = $R2_SECRET_ACCESS_KEY
+          endpoint = https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com
+          acl = private
+          EOF
+          
+          # Upload the ISO to R2 bucket ctx0an
+          echo "Uploading ISO to Cloudflare R2..."
+          rclone copy live-build/*.iso r2:ctx0an --progress
