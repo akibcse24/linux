@@ -129,8 +129,8 @@ rm -rf /tmp/cargo
 
 # 2. Extract/copy dotfiles to skeleton profile so new users inherit them
 if [ -d /tmp/hyprland-hyprdots-files/Theme/Configs ]; then
-  mkdir -p /etc/skel/.config
-  cp -r /tmp/hyprland-hyprdots-files/Theme/Configs/* /etc/skel/.config/
+  mkdir -p /etc/skel
+  cp -r /tmp/hyprland-hyprdots-files/Theme/Configs/. /etc/skel/
 fi
 
 # 3. Configure Getty Automatic Login on tty1 for Wayland session
