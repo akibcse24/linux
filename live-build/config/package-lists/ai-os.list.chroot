@@ -1,4 +1,4 @@
-# NeuralCore OS base system
+# ctx0an base system
 live-boot
 live-config
 live-config-systemd
@@ -6,14 +6,35 @@ plymouth
 plymouth-themes
 systemd-sysv
 
-# Desktop and session bootstrap
-xserver-xorg
-xinit
-openbox
-nodm
-tint2
-pcmanfm
-lxterminal
+# Desktop and session bootstrap (Hyprland Wayland environment)
+hyprland
+waybar
+dunst
+rofi
+kitty
+swww
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+polkit-kde-agent-1
+grim
+slurp
+wl-clipboard
+cliphist
+brightnessctl
+pavucontrol
+pamixer
+bluez
+blueman
+pipewire
+pipewire-alsa
+pipewire-audio
+pipewire-pulse
+wireplumber
+zsh
+exa
+fastfetch
+qt5-wayland
+qt6-wayland
 dbus-x11
 fonts-dejavu-core
 desktop-file-utils

@@ -11,7 +11,7 @@ from fastmcp import FastMCP
 # Create FastAPI app
 app = FastAPI(
     title="ctx0an Daemon",
-    description="REST API and Model Context Protocol (MCP) server for custom Linux Live OS",
+    description="REST API and Model Context Protocol (MCP) server for ctx0an Live OS",
     version="1.0.0"
 )
 

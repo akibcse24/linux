@@ -10,7 +10,7 @@ jobs:
   build-iso:
     runs-on: ubuntu-latest
     container:
-      image: debian:bookworm
+      image: debian:trixie-slim
       options: --privileged
 
     steps:
@@ -36,5 +36,5 @@ jobs:
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ai-powered-linux-iso
+          name: ctx0an-iso
           path: live-build/*.iso

@@ -5,7 +5,7 @@ import re
 import argparse
 import subprocess
 
-SYSTEM_PROMPT = """You are a system administrator and developer agent executing actions on a Debian Live OS (amd64).
+SYSTEM_PROMPT = """You are a system administrator and developer agent executing actions on ctx0an (Debian Live OS, amd64).
 You have full access to a local bash shell. You can execute shell commands by enclosing them in a markdown code block:
 ```bash
 <command>

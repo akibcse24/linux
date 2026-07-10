@@ -1,11 +1,11 @@
-# NeuralCore OS
+# ctx0an
 
-NeuralCore OS is a Debian-based live Linux distribution built with `live-build` and `debootstrap` so it can be compiled reliably inside GitHub Actions containers.
+ctx0an is a Debian-based live distribution built with `live-build` and `debootstrap` so it can be compiled reliably inside GitHub Actions containers.
 
 The current repository is wired for a lightweight Openbox desktop with local AI tooling baked into the ISO:
 
 - Ollama for local LLM inference
-- LM Studio via its official Linux installer
+- LM Studio via its official installer
 - Python 3.12+ userland from Debian trixie
 - PyTorch, TensorFlow, JupyterLab, and the LM Studio Python SDK in a dedicated virtual environment
 - VS Code with AI-oriented extensions

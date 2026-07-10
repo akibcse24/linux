@@ -12,10 +12,10 @@ from urllib import error as urlerror
 from urllib import request as urlrequest
 
 
-HOST, PORT = os.getenv("NEURALCORE_ASSISTANT_BIND", "127.0.0.1:8811").rsplit(":", 1)
+HOST, PORT = os.getenv("CTX0AN_ASSISTANT_BIND", "127.0.0.1:8811").rsplit(":", 1)
 PORT = int(PORT)
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
-OLLAMA_MODEL = os.getenv("NEURALCORE_ASSISTANT_MODEL", "llama3.1:8b")
+OLLAMA_MODEL = os.getenv("CTX0AN_ASSISTANT_MODEL", "llama3.1:8b")
 
 
 def run_command(command: list[str]) -> dict[str, object]:

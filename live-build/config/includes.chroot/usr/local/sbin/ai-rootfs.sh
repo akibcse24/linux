@@ -8,8 +8,8 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 AI_USER="ai"
 AI_GROUP="ai"
 AI_HOME="/home/${AI_USER}"
-NEURALCORE_HOME="/opt/neuralcore"
-PYTHON_VENV="${NEURALCORE_HOME}/venvs/ai-stack"
+CTX0AN_HOME="/opt/ctx0an"
+PYTHON_VENV="${CTX0AN_HOME}/venvs/ai-stack"
 
 if ! getent group "${AI_GROUP}" >/dev/null 2>&1; then
   groupadd --system "${AI_GROUP}"
@@ -21,7 +21,7 @@ fi
 
 usermod -aG sudo "${AI_USER}" || true
 
-install -d -m 0755 "${NEURALCORE_HOME}" "${NEURALCORE_HOME}/models" "${NEURALCORE_HOME}/venvs"
+install -d -m 0755 "${CTX0AN_HOME}" "${CTX0AN_HOME}/models" "${CTX0AN_HOME}/venvs"
 install -d -m 0755 "${AI_HOME}/.config/Code/User" "${AI_HOME}/.config/openbox" "${AI_HOME}/.local/share/applications"
 chown -R "${AI_USER}:${AI_GROUP}" "${AI_HOME}"
 
@@ -82,9 +82,9 @@ su - "${AI_USER}" -c 'code --install-extension github.copilot --force' || true
 su - "${AI_USER}" -c 'code --install-extension github.copilot-chat --force' || true
 
 
-cat >/etc/profile.d/neuralcore.sh <<'EOF'
-export NEURALCORE_HOME=/opt/neuralcore
-export PATH="/opt/neuralcore/venvs/ai-stack/bin:$PATH"
+cat >/etc/profile.d/ctx0an.sh <<'EOF'
+export CTX0AN_HOME=/opt/ctx0an
+export PATH="/opt/ctx0an/venvs/ai-stack/bin:$PATH"
 export OLLAMA_HOST=http://127.0.0.1:11434
 EOF
 
@@ -102,6 +102,44 @@ cat >/etc/sudoers.d/010-ai-nopasswd <<EOF
 ${AI_USER} ALL=(ALL) NOPASSWD:ALL
 EOF
 chmod 0440 /etc/sudoers.d/010-ai-nopasswd
+
+# -------------------------------------------------------------
+# Hyprland and Hyprdots (Senshi111) Configuration
+# -------------------------------------------------------------
+
+echo "Configuring Hyprland / Hyprdots at build time..."
+
+# 1. Clone dotfiles and installer repositories at build time
+git clone --depth 1 https://github.com/Senshi111/debian-hyprland-hyprdots.git /tmp/debian-hyprland-hyprdots
+git clone --depth 1 https://github.com/Senshi111/hyprland-hyprdots-files.git /tmp/hyprland-hyprdots-files
+
+# 2. Extract/copy dotfiles to skeleton profile so new users inherit them
+if [ -d /tmp/hyprland-hyprdots-files/Theme/Configs ]; then
+  mkdir -p /etc/skel/.config
+  cp -r /tmp/hyprland-hyprdots-files/Theme/Configs/* /etc/skel/.config/
+fi
+
+# 3. Configure Getty Automatic Login on tty1 for Wayland session
+echo "Configuring automatic console login on tty1..."
+mkdir -p /etc/systemd/system/getty@tty1.service.d
+cat << 'EOF' > /etc/systemd/system/getty@tty1.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin ai --noclear %I $TERM
+EOF
+
+# 4. Auto-launch Hyprland upon tty1 console login
+cat << 'EOF' >> /etc/skel/.bash_profile
+
+# Auto-launch Hyprland Wayland compositor on tty1
+if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+  exec Hyprland
+fi
+EOF
+
+# 5. Set default shell to Zsh for user 'ai' (Hyprdots optimized)
+chsh -s /bin/zsh "${AI_USER}" || true
+
 
 if command -v systemctl >/dev/null 2>&1; then
   for service_name in ai-assistant.service ollama.service; do
