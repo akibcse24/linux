@@ -132,6 +132,14 @@ if [ -d /tmp/hyprland-hyprdots-files/Theme/Configs ]; then
   mkdir -p /etc/skel
   cp -r /tmp/hyprland-hyprdots-files/Theme/Configs/. /etc/skel/
 fi
+if [ -d /tmp/hyprland-hyprdots-files/Theme/Source ]; then
+  cp -r /tmp/hyprland-hyprdots-files/Theme/Source/. /etc/skel/ 2>/dev/null || true
+fi
+
+# Ensure a default .zshrc exists so Zsh newuser install prompt is bypassed
+if [ ! -f /etc/skel/.zshrc ]; then
+  touch /etc/skel/.zshrc
+fi
 
 # 3. Configure Getty Automatic Login on tty1 for Wayland session
 echo "Configuring automatic console login on tty1..."
@@ -143,13 +151,15 @@ ExecStart=-/sbin/agetty --autologin ai --noclear %I $TERM
 EOF
 
 # 4. Auto-launch Hyprland upon tty1 console login
-cat << 'EOF' >> /etc/skel/.bash_profile
+for profile_file in /etc/skel/.bash_profile /etc/skel/.zprofile; do
+  cat << 'EOF' >> "$profile_file"
 
 # Auto-launch Hyprland Wayland compositor on tty1
 if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
   exec Hyprland
 fi
 EOF
+done
 
 # 5. Set default shell to Zsh for user 'ai' (Hyprdots optimized)
 chsh -s /bin/zsh "${AI_USER}" || true
