@@ -12,7 +12,6 @@ waybar
 dunst
 rofi
 kitty
-swww
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 polkit-kde-agent-1
@@ -89,7 +88,6 @@ nodejs
 npm
 tmux
 screen
-neofetch
 ufw
 iptables
 iproute2

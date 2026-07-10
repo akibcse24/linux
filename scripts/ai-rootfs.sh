@@ -113,6 +113,20 @@ echo "Configuring Hyprland / Hyprdots at build time..."
 git clone --depth 1 https://github.com/Senshi111/debian-hyprland-hyprdots.git /tmp/debian-hyprland-hyprdots
 git clone --depth 1 https://github.com/Senshi111/hyprland-hyprdots-files.git /tmp/hyprland-hyprdots-files
 
+# 1.5 Compile and install swww from source
+echo "Installing build dependencies for swww compilation..."
+apt-get install -y --no-install-recommends cargo rustc libxkbcommon-dev libwayland-dev pkg-config
+
+echo "Compiling and installing swww from source via cargo..."
+export CARGO_HOME=/tmp/cargo
+cargo install --locked --root /usr/local swww || true
+
+echo "Cleaning up Cargo/Rust compilation tools and temporary cache..."
+apt-get purge -y cargo rustc
+apt-get autoremove -y
+rm -rf /tmp/cargo
+
+
 # 2. Extract/copy dotfiles to skeleton profile so new users inherit them
 if [ -d /tmp/hyprland-hyprdots-files/Theme/Configs ]; then
   mkdir -p /etc/skel/.config
