@@ -10,7 +10,7 @@ jobs:
   build-iso:
     runs-on: ubuntu-latest
     container:
-      image: debian:trixie-slim
+      image: debian:testing-slim
       options: --privileged
 
     steps:

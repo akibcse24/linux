@@ -4,7 +4,7 @@ set -e
 
 lb config noauto \
     --mode debian \
-    --distribution trixie \
+    --distribution testing \
     --binary-images iso-hybrid \
     --architectures amd64 \
     --archive-areas "main contrib non-free non-free-firmware" \

@@ -31,9 +31,9 @@ pipewire-audio
 pipewire-pulse
 wireplumber
 zsh
-exa
+eza
 fastfetch
-qt5-wayland
+qtwayland5
 qt6-wayland
 dbus-x11
 fonts-dejavu-core
@@ -43,7 +43,8 @@ shared-mime-info
 # Networking and device management
 network-manager
 network-manager-gnome
-policykit-1
+pkexec
+polkitd
 
 # Python and development stack
 python3
