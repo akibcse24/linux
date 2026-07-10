@@ -41,12 +41,16 @@ if ! command -v ldconfig >/dev/null 2>&1; then
   apt-get install -y --no-install-recommends libc-bin
 fi
 
-if ! command -v ldconfig >/dev/null 2>&1; then
-  if [ -x /usr/sbin/ldconfig ]; then
-    ln -sf /usr/sbin/ldconfig /usr/bin/ldconfig
-  elif [ -x /sbin/ldconfig ]; then
-    ln -sf /sbin/ldconfig /usr/bin/ldconfig
-  fi
+ldconfig_path="$(command -v ldconfig 2>/dev/null || true)"
+if [ -z "${ldconfig_path}" ] && [ -x /usr/sbin/ldconfig ]; then
+  ldconfig_path=/usr/sbin/ldconfig
+elif [ -z "${ldconfig_path}" ] && [ -x /sbin/ldconfig ]; then
+  ldconfig_path=/sbin/ldconfig
+fi
+
+if [ -n "${ldconfig_path}" ]; then
+  ln -sf "${ldconfig_path}" /usr/bin/ldconfig
+  ln -sf "${ldconfig_path}" /usr/local/bin/ldconfig
 fi
 
 # Ollama's installer may return non-zero in chroot/CI when systemd is unavailable.
